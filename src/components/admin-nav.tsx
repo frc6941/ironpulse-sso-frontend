@@ -23,17 +23,17 @@ const routes: Route[] = [
   {
     id: "members",
     name: "Members",
-    link: "/admin"
+    link: "/admin/members"
   },
   {
     id: "clients",
-    name: "Cllients",
-    link: "/admin"
+    name: "Clients",
+    link: "/admin/clients"
   },
   {
     id: "settings",
     name: "Settings",
-    link: "/admin"
+    link: "/admin/settings"
   }
 ]
 

@@ -9,6 +9,9 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import { z } from "zod"
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
+import {useSearchParams} from "next/navigation";
+import {useToast} from "@/components/ui/use-toast";
+import {redirect} from "next/navigation";
 
 const formSchema = z.object({
   username: z.string().min(1).trim(),
@@ -23,9 +26,32 @@ export default function Home() {
       password: ""
     },
   })
+  const { toast } = useToast()
+  const searchParams = useSearchParams()
+  const redirectUri = searchParams.get("redirect_uri")
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values)
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ username: values.username, password: values.password })
+    })
+
+    if (res.status != 200) {
+      toast({
+        variant: "destructive",
+        title: "Login failed.",
+        description: "Username or password incorrect.",
+      })
+      return
+    }
+    const data = await res.json()
+    document.cookie = `ip_sso_token=${data.token}`
+    if (redirectUri !== null) {
+      window.location.href = redirectUri
+    }
   }
 
   return (
