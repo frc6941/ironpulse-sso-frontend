@@ -11,7 +11,7 @@ import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 
 const formSchema = z.object({
-  ironPulseId: z.string().min(1).trim(),
+  username: z.string().min(1).trim(),
   password: z.string().min(5).max(70).trim()
 })
 
@@ -19,7 +19,7 @@ export default function Home() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      ironPulseId: "",
+      username: "",
       password: ""
     },
   })
@@ -46,16 +46,13 @@ export default function Home() {
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                 <FormField
                   control={form.control}
-                  name="ironPulseId"
+                  name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>IronPulse ID</FormLabel>
+                      <FormLabel>Username</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your IronPulse ID" {...field} />
+                        <Input placeholder="Enter your username" {...field} />
                       </FormControl>
-                      <FormDescription>
-                        This should be your username.
-                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
