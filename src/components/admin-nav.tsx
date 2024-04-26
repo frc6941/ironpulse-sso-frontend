@@ -2,6 +2,7 @@ import Logo from "@/components/icons/logo";
 import Link from "next/link";
 import {Avatar, AvatarFallback} from "@/components/ui/avatar";
 import {Separator} from "@/components/ui/separator";
+import {ModeToggle} from "@/components/mode-toggle";
 
 interface AdminNavBarProps {
   current: string
@@ -38,7 +39,7 @@ const routes: Route[] = [
 
 export default function AdminNavBar({ current }: AdminNavBarProps) {
   const links = routes.map(({ id, name, link }: Route) =>
-    <Link href={link} className={`text-sm font-medium transition-colors hover:text-primary ${current === id ? "" : "text-muted-foreground"}`}>
+    <Link key={id} href={link} className={`text-sm font-medium transition-colors hover:text-primary ${current === id ? "" : "text-muted-foreground"}`}>
       {name}
     </Link>
   )
@@ -48,6 +49,7 @@ export default function AdminNavBar({ current }: AdminNavBarProps) {
       <div className="flex flex-row items-center space-x-3 h-16">
         <Logo className="w-12 h-12 m-0 ml-6 pt-0 pb-0" fill="fill-primary"></Logo>
         <h1 className="text-lg font-bold">IronPulse SSO Admin</h1>
+        <ModeToggle></ModeToggle>
         <nav className="flex flex-row pl-10 space-x-8">
           {links}
         </nav>
