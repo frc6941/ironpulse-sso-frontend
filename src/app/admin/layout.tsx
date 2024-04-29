@@ -10,7 +10,6 @@ export default function AdminLayout({
 }) {
   const pathname = usePathname();
   const currentSubpage = pathname.substring(7);
-  console.log(currentSubpage);
 
   return (
     <>
