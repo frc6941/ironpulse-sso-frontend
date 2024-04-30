@@ -12,6 +12,7 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {useSearchParams} from "next/navigation";
 import {useToast} from "@/components/ui/use-toast";
 import {Loader2} from "lucide-react";
+import { useState } from "react";
 
 const formSchema = z.object({
   username: z.string().min(1).trim(),
@@ -29,10 +30,10 @@ export default function Home() {
   const { toast } = useToast()
   const searchParams = useSearchParams()
   const redirectUri = searchParams.get("redirect_uri")
-  let isDisabled = false
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    isDisabled = true
+    setIsDisabled(true)
     const res = await fetch("/api/login", {
       method: "POST",
       headers: {
@@ -47,7 +48,7 @@ export default function Home() {
         title: "Login failed.",
         description: "Username or password incorrect.",
       })
-      isDisabled = false
+      setIsDisabled(false)
       return
     }
     if (res.status !== 200) {
@@ -56,7 +57,7 @@ export default function Home() {
         title: "Login failed.",
         description: res.text()
       })
-      isDisabled = false
+      setIsDisabled(false)
       return
     }
     toast({
@@ -64,7 +65,7 @@ export default function Home() {
       description: "You will be redirected to previous page in a while."
     })
     const data = await res.json()
-    isDisabled = false
+    setIsDisabled(false)
     document.cookie = `ip_sso_token=${data.token}`
     if (redirectUri !== null) {
       window.location.href = redirectUri
