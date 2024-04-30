@@ -1,15 +1,15 @@
-'use client'
+"use client"
 
-import AdminNavBar from "../../components/admin-nav";
-import { usePathname } from "next/navigation";
+import AdminNavBar from "../../components/admin-nav"
+import { usePathname } from "next/navigation"
 
 export default function AdminLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const pathname = usePathname();
-  const currentSubpage = pathname.substring(7);
+  const pathname = usePathname()
+  const currentSubpage = pathname.substring(7)
 
   return (
     <>
@@ -18,5 +18,5 @@ export default function AdminLayout({
       </header>
       {children}
     </>
-  );
+  )
 }

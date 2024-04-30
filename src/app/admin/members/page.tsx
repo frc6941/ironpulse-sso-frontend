@@ -1,37 +1,54 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { baseurl, testMemberData } from "../../../lib/test-data";
-import { columns, Member } from "./columns";
-import { DataTable } from "../../../components/data-table";
-import { Button } from "../../../components/ui/button";
-import { Island_Moments } from "next/font/google";
+import { useEffect, useState } from "react"
+import { testMemberData } from "../../../lib/test-data"
+import { columns, Member } from "./columns"
+import { DataTable } from "../../../components/data-table"
+import { Button } from "../../../components/ui/button"
+import { useToast } from "../../../components/ui/use-toast"
+import { ToastAction } from "@radix-ui/react-toast"
 
 export default function Members() {
-  const [members, setMembers] = useState<Array<Member>>([]);
-  const [fetchError, setFetchError] = useState<boolean>(false);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { toast } = useToast()
+  const [members, setMembers] = useState<Array<Member>>([])
 
   async function getMembers(): Promise<void> {
-    try {
-      const response = await fetch(baseurl + "/admin/users");
-      if (!response.ok) {
-        throw new Error("Failed to fetch members");
-      }
-      const data = await response.json();
-      setMembers(data);
-      setFetchError(false);
-    } catch (error) {
-      setFetchError(true);
-    } finally {
-      setIsLoading(false);
+    const res = await fetch("/admin/users", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+    if (res.status === 404) {
+      toast({
+        variant: "destructive",
+        title: "Something went wrong.",
+        description: "There was a problem with your request",
+        action: (
+          <ToastAction altText="Try again">
+            <Button onClick={getMembers}>Try Again</Button>
+          </ToastAction>
+        ),
+      })
+      return
     }
+    if (res.status !== 200) {
+      toast({
+        variant: "destructive",
+        title: "Fetch members failed",
+        description: res.text(),
+      })
+      return
+    }
+    const data = await res.json()
+    setMembers(data)
+    return
   }
 
   useEffect(() => {
     // setMembers(testMemberData);
-    getMembers();
-  }, []);
+    getMembers()
+  }, [])
 
   return (
     <>
@@ -39,17 +56,8 @@ export default function Members() {
         <h1 className="p-8 text-3xl font-bold">Members</h1>
       </div>
       <div className="mx-5 py-10">
-        {fetchError ? (
-          <div className="mx-auto flex w-max justify-center flex-col">
-            <h1>Failed to fetch users.</h1>
-            <Button onClick={getMembers} className="mx-auto">
-              Try Again
-            </Button>
-          </div>
-        ) : (
-          <DataTable columns={columns} data={members} />
-        )}
+        <DataTable columns={columns} data={members} />
       </div>
     </>
-  );
+  )
 }
